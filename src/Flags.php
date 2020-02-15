@@ -3,9 +3,9 @@
 namespace TorneLIB;
 
 /**
- * Class Flags
+ * Class Flags Statically callable.
  * @package TorneLIB
- * @version 6.0.0
+ * @version 6.1.0
  */
 abstract class Flags
 {
@@ -20,7 +20,7 @@ abstract class Flags
 	 *
 	 * @return bool If successful
 	 * @throws \Exception
-	 * @since 6.0.0
+	 * @since 6.1.0
 	 */
 	public static function setFlag($flagKey = '', $flagValue = null)
 	{
@@ -46,7 +46,7 @@ abstract class Flags
 	 * @param string $flagKey
 	 *
 	 * @return mixed|null
-	 * @since 6.0.0
+	 * @since 6.1.0
 	 */
 	public static function getFlag($flagKey = '')
 	{
@@ -66,7 +66,7 @@ abstract class Flags
 	 * @param string $flagKey
 	 *
 	 * @return bool
-	 * @since 6.0.0
+	 * @since 6.1.0
 	 */
 	public static function isFlag($flagKey = '')
 	{
@@ -83,7 +83,7 @@ abstract class Flags
 	 * @param string $flagKey
 	 *
 	 * @return bool
-	 * @since 6.0.0
+	 * @since 6.1.0
 	 */
 	public static function hasFlag($flagKey = '')
 	{
@@ -101,7 +101,7 @@ abstract class Flags
 	 * @param string $flagKey
 	 *
 	 * @return bool
-	 * @since 6.0.0
+	 * @since 6.1.0
 	 */
 	public static function unsetFlag($flagKey = '')
 	{
@@ -118,7 +118,7 @@ abstract class Flags
 	 * @param string $flagKey
 	 *
 	 * @return bool
-	 * @since 6.0.0
+	 * @since 6.1.0
 	 */
 	public static function removeFlag($flagKey = '')
 	{
@@ -129,7 +129,7 @@ abstract class Flags
 	 * @param string $flagKey
 	 *
 	 * @return bool
-	 * @since 6.0.0
+	 * @since 6.1.0
 	 */
 	public static function deleteFlag($flagKey = '')
 	{
@@ -137,13 +137,17 @@ abstract class Flags
 	}
 
 	/**
-	 * @since 6.0.0
+	 * @since 6.1.0
 	 */
 	public static function clearAllFlags()
 	{
 		self::$internalFlags = [];
 	}
 
+	/**
+	 * Get them all.
+	 * @return mixed
+	 */
 	public static function getAllFlags()
 	{
 		return self::$internalFlags;

@@ -2,8 +2,12 @@
 
 namespace TorneLIB\Config;
 
-use TorneLIB\Flags;
-
+/**
+ * Class Flag Non static caller.
+ *
+ * @package TorneLIB\Config
+ * @version 6.1.0
+ */
 class Flag {
 	public function __call($name, $arguments)
 	{
