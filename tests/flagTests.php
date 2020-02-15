@@ -96,6 +96,20 @@ class flagTests extends TestCase
 
 	/**
 	 * @test
+	 * @throws \Exception
+	 */
+	public function manyFlags() {
+		Flags::setFlags([
+			'flag1' => 'yes',
+			'flag2' => 'current',
+			'flag3' => 'present'
+		]);
+
+		static::assertCount(3, Flags::getAllFlags());
+	}
+
+	/**
+	 * @test
 	 * @testdox Using the non static class (which actually calls for the static one).
 	 * @throws \Exception
 	 */

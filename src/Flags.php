@@ -5,7 +5,7 @@ namespace TorneLIB;
 /**
  * Class Flags Statically callable.
  * @package TorneLIB
- * @version 6.1.0
+ * @version 6.1.1
  */
 abstract class Flags
 {
@@ -15,7 +15,7 @@ abstract class Flags
 	 * Set internal flag parameter.
 	 *
 	 * @param string $flagKey
-	 * @param string $flagValue Nullable since 6.0.10 = If null, then it is considered a true boolean, set
+	 * @param string $flagValue Nullable since 6.1.0 = If null, then it is considered a true boolean, set
 	 *     setFlag("key") will always be true as an activation key
 	 *
 	 * @return bool If successful
@@ -94,6 +94,51 @@ abstract class Flags
 		return false;
 	}
 
+	/**
+	 * @param array $arrayData
+	 *
+	 * @return bool
+	 * @since 6.1.1
+	 */
+	public static function isAssoc(array $arrayData)
+	{
+		if ([] === $arrayData) {
+			return false;
+		}
+
+		return array_keys($arrayData) !== range(0, count($arrayData) - 1);
+	}
+
+	/**
+	 * Set multiple flags
+	 *
+	 * @param array $flags
+	 * @throws \Exception
+	 * @since 6.1.1
+	 */
+	public static function setFlags($flags = [])
+	{
+		if (self::isAssoc($flags)) {
+			foreach ($flags as $flagKey => $flagData) {
+				self::setFlag($flagKey, $flagData);
+			}
+		} else {
+			foreach ($flags as $flagKey) {
+				self::setFlag($flagKey, true);
+			}
+		}
+	}
+
+	/**
+	 * Return all flags
+	 *
+	 * @return array
+	 * @since 6.1.1
+	 */
+	public function getFlags()
+	{
+		return self::$internalFlags;
+	}
 
 	/// Cleanup Start
 
