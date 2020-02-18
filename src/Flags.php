@@ -5,217 +5,216 @@ namespace TorneLIB;
 /**
  * Class Flags Statically callable.
  * @package TorneLIB
- * @version 6.1.1
+ * @version 6.1.2
  */
 class Flags
 {
-	private $internalFlags;
+    /**
+     * @var array Internally stored flags.
+     */
+    private $internalFlags = [];
 
-	protected static $staticFlagSet;
+    /**
+     * @var array For all static calls.
+     */
+    protected static $staticFlagSet = [];
 
-	/**
-	 * Set internal flag parameter.
-	 *
-	 * @param string $flagKey
-	 * @param string $flagValue Nullable since 6.1.0 = If null, then it is considered a true boolean, set
-	 *     setFlag("key") will always be true as an activation key
-	 *
-	 * @return bool If successful
-	 * @throws \Exception
-	 * @since 6.1.0
-	 */
-	public function setFlag($flagKey = '', $flagValue = null)
-	{
-		if (!empty($flagKey)) {
-			if (is_null($flagValue)) {
-				$flagValue = true;
-			}
-			$this->internalFlags[$flagKey] = $flagValue;
+    /**
+     * Set internal flag parameter.
+     *
+     * @param string $flagKey
+     * @param string $flagValue
+     *
+     * @return bool If successful
+     * @throws \Exception
+     * @since 6.1.0
+     */
+    public function setFlag($flagKey = '', $flagValue = null)
+    {
+        if (!empty($flagKey)) {
+            if (is_null($flagValue)) {
+                $flagValue = true;
+            }
+            $this->internalFlags[$flagKey] = $flagValue;
 
-			return true;
-		}
+            return true;
+        }
 
-		// LIB_UNHANDLED
-		throw new \Exception(
-			"Flags can not be empty",
-			65535
-		);
-	}
+        // LIB_UNHANDLED
+        throw new \Exception(
+            "Flags can not be empty",
+            65535
+        );
+    }
 
-	/**
-	 * Get internal flag
-	 *
-	 * @param string $flagKey
-	 *
-	 * @return mixed|null
-	 * @since 6.1.0
-	 */
-	public function getFlag($flagKey = '')
-	{
-		if (isset($this->internalFlags[$flagKey])) {
-			return $this->internalFlags[$flagKey];
-		}
+    /**
+     * Get internal flag
+     *
+     * @param string $flagKey
+     * @return mixed|null
+     * @since 6.1.0
+     */
+    public function getFlag($flagKey = '')
+    {
+        if (isset($this->internalFlags[$flagKey])) {
+            return $this->internalFlags[$flagKey];
+        }
 
-		return null;
-	}
+        return null;
+    }
 
+    /**
+     * Check if flag is set and true
+     *
+     * @param string $flagKey
+     * @return bool
+     * @since 6.1.0
+     */
+    public function isFlag($flagKey = '')
+    {
+        if ($this->hasFlag($flagKey)) {
+            return ($this->getFlag($flagKey) === 1 || $this->getFlag($flagKey) === true ? true : false);
+        }
 
-	/// Flag sanities
+        return false;
+    }
 
-	/**
-	 * Check if flag is set and true
-	 *
-	 * @param string $flagKey
-	 *
-	 * @return bool
-	 * @since 6.1.0
-	 */
-	public function isFlag($flagKey = '')
-	{
-		if ($this->hasFlag($flagKey)) {
-			return ($this->getFlag($flagKey) === 1 || $this->getFlag($flagKey) === true ? true : false);
-		}
+    /**
+     * Check if there is an internal flag set with current key
+     *
+     * @param string $flagKey
+     * @return bool
+     * @since 6.1.0
+     */
+    public function hasFlag($flagKey = '')
+    {
+        if (!is_null($this->getFlag($flagKey))) {
+            return true;
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	/**
-	 * Check if there is an internal flag set with current key
-	 *
-	 * @param string $flagKey
-	 *
-	 * @return bool
-	 * @since 6.1.0
-	 */
-	public function hasFlag($flagKey = '')
-	{
-		if (!is_null($this->getFlag($flagKey))) {
-			return true;
-		}
+    /**
+     * @param array $arrayData
+     * @return bool
+     * @since 6.1.1
+     */
+    public function isAssoc(array $arrayData)
+    {
+        if ([] === $arrayData) {
+            return false;
+        }
 
-		return false;
-	}
+        return array_keys($arrayData) !== range(0, count($arrayData) - 1);
+    }
 
-	/**
-	 * @param array $arrayData
-	 *
-	 * @return bool
-	 * @since 6.1.1
-	 */
-	public function isAssoc(array $arrayData)
-	{
-		if ([] === $arrayData) {
-			return false;
-		}
+    /**
+     * Set multiple flags
+     *
+     * @param array $flags
+     * @throws \Exception
+     * @since 6.1.1
+     */
+    public function setFlags($flags = [])
+    {
+        if ($this->isAssoc($flags)) {
+            foreach ($flags as $flagKey => $flagData) {
+                $this->setFlag($flagKey, $flagData);
+            }
+        } else {
+            foreach ($flags as $flagKey) {
+                $this->setFlag($flagKey, true);
+            }
+        }
+    }
 
-		return array_keys($arrayData) !== range(0, count($arrayData) - 1);
-	}
+    /**
+     * Return all flags
+     * @return array
+     * @since 6.1.1
+     */
+    public function getFlags()
+    {
+        return $this->internalFlags;
+    }
 
-	/**
-	 * Set multiple flags
-	 *
-	 * @param array $flags
-	 * @throws \Exception
-	 * @since 6.1.1
-	 */
-	public function setFlags($flags = [])
-	{
-		if ($this->isAssoc($flags)) {
-			foreach ($flags as $flagKey => $flagData) {
-				$this->setFlag($flagKey, $flagData);
-			}
-		} else {
-			foreach ($flags as $flagKey) {
-				$this->setFlag($flagKey, true);
-			}
-		}
-	}
+    /**
+     * @param string $flagKey
+     * @return bool
+     * @since 6.1.0
+     */
+    public function unsetFlag($flagKey = '')
+    {
+        if ($this->hasFlag($flagKey)) {
+            unset($this->internalFlags[$flagKey]);
 
-	/**
-	 * Return all flags
-	 *
-	 * @return array
-	 * @since 6.1.1
-	 */
-	public function getFlags()
-	{
-		return $this->internalFlags;
-	}
+            return true;
+        }
 
-	/// Cleanup Start
+        return false;
+    }
 
-	/**
-	 * @param string $flagKey
-	 *
-	 * @return bool
-	 * @since 6.1.0
-	 */
-	public function unsetFlag($flagKey = '')
-	{
-		if ($this->hasFlag($flagKey)) {
-			unset($this->internalFlags[$flagKey]);
+    /**
+     * @param string $flagKey
+     * @return bool
+     * @since 6.1.0
+     */
+    public function removeFlag($flagKey = '')
+    {
+        return $this->unsetFlag($flagKey);
+    }
 
-			return true;
-		}
+    /**
+     * @param string $flagKey
+     * @return bool
+     * @since 6.1.0
+     */
+    public function deleteFlag($flagKey = '')
+    {
+        return $this->unsetFlag($flagKey);
+    }
 
-		return false;
-	}
+    /**
+     * @since 6.1.0
+     */
+    public function clearAllFlags()
+    {
+        $this->internalFlags = [];
+    }
 
-	/**
-	 * @param string $flagKey
-	 *
-	 * @return bool
-	 * @since 6.1.0
-	 */
-	public function removeFlag($flagKey = '')
-	{
-		return $this->unsetFlag($flagKey);
-	}
+    /**
+     * Get them all.
+     * @return mixed
+     * @since 6.1.1
+     */
+    public function getAllFlags()
+    {
+        return $this->internalFlags;
+    }
 
-	/**
-	 * @param string $flagKey
-	 *
-	 * @return bool
-	 * @since 6.1.0
-	 */
-	public function deleteFlag($flagKey = '')
-	{
-		return $this->unsetFlag($flagKey);
-	}
+    /**
+     * @param $name
+     * @param $arguments
+     * @return mixed
+     * @since 6.1.2
+     */
+    public static function __callStatic($name, $arguments)
+    {
+        if (!is_object(self::$staticFlagSet)) {
+            self::$staticFlagSet = new Flags();
+        }
 
-	/**
-	 * @since 6.1.0
-	 */
-	public function clearAllFlags()
-	{
-		$this->internalFlags = [];
-	}
-
-	/**
-	 * Get them all.
-	 * @return mixed
-	 */
-	public function getAllFlags()
-	{
-		return $this->internalFlags;
-	}
-
-	public static function __callStatic($name, $arguments)
-	{
-		if (!is_object(self::$staticFlagSet)) {
-			self::$staticFlagSet = new Flags();
-		}
-
-		return call_user_func_array(
-			array(
-				self::$staticFlagSet,
-				preg_replace(
-					'/^_/',
-					'',
-					$name
-				)
-			),
-			$arguments
-		);
-	}
+        return call_user_func_array(
+            [
+                self::$staticFlagSet,
+                preg_replace(
+                    '/^_/',
+                    '',
+                    $name
+                ),
+            ],
+            $arguments
+        );
+    }
 }
