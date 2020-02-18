@@ -7,9 +7,11 @@ namespace TorneLIB;
  * @package TorneLIB
  * @version 6.1.1
  */
-abstract class Flags
+class Flags
 {
-	private static $internalFlags;
+	private $internalFlags;
+
+	protected static $staticFlagSet;
 
 	/**
 	 * Set internal flag parameter.
@@ -22,13 +24,13 @@ abstract class Flags
 	 * @throws \Exception
 	 * @since 6.1.0
 	 */
-	public static function setFlag($flagKey = '', $flagValue = null)
+	public function setFlag($flagKey = '', $flagValue = null)
 	{
 		if (!empty($flagKey)) {
 			if (is_null($flagValue)) {
 				$flagValue = true;
 			}
-			self::$internalFlags[$flagKey] = $flagValue;
+			$this->internalFlags[$flagKey] = $flagValue;
 
 			return true;
 		}
@@ -48,10 +50,10 @@ abstract class Flags
 	 * @return mixed|null
 	 * @since 6.1.0
 	 */
-	public static function getFlag($flagKey = '')
+	public function getFlag($flagKey = '')
 	{
-		if (isset(self::$internalFlags[$flagKey])) {
-			return self::$internalFlags[$flagKey];
+		if (isset($this->internalFlags[$flagKey])) {
+			return $this->internalFlags[$flagKey];
 		}
 
 		return null;
@@ -68,10 +70,10 @@ abstract class Flags
 	 * @return bool
 	 * @since 6.1.0
 	 */
-	public static function isFlag($flagKey = '')
+	public function isFlag($flagKey = '')
 	{
-		if (self::hasFlag($flagKey)) {
-			return (self::getFlag($flagKey) === 1 || self::getFlag($flagKey) === true ? true : false);
+		if ($this->hasFlag($flagKey)) {
+			return ($this->getFlag($flagKey) === 1 || $this->getFlag($flagKey) === true ? true : false);
 		}
 
 		return false;
@@ -85,9 +87,9 @@ abstract class Flags
 	 * @return bool
 	 * @since 6.1.0
 	 */
-	public static function hasFlag($flagKey = '')
+	public function hasFlag($flagKey = '')
 	{
-		if (!is_null(self::getFlag($flagKey))) {
+		if (!is_null($this->getFlag($flagKey))) {
 			return true;
 		}
 
@@ -100,7 +102,7 @@ abstract class Flags
 	 * @return bool
 	 * @since 6.1.1
 	 */
-	public static function isAssoc(array $arrayData)
+	public function isAssoc(array $arrayData)
 	{
 		if ([] === $arrayData) {
 			return false;
@@ -116,15 +118,15 @@ abstract class Flags
 	 * @throws \Exception
 	 * @since 6.1.1
 	 */
-	public static function setFlags($flags = [])
+	public function setFlags($flags = [])
 	{
-		if (self::isAssoc($flags)) {
+		if ($this->isAssoc($flags)) {
 			foreach ($flags as $flagKey => $flagData) {
-				self::setFlag($flagKey, $flagData);
+				$this->setFlag($flagKey, $flagData);
 			}
 		} else {
 			foreach ($flags as $flagKey) {
-				self::setFlag($flagKey, true);
+				$this->setFlag($flagKey, true);
 			}
 		}
 	}
@@ -137,7 +139,7 @@ abstract class Flags
 	 */
 	public function getFlags()
 	{
-		return self::$internalFlags;
+		return $this->internalFlags;
 	}
 
 	/// Cleanup Start
@@ -148,10 +150,10 @@ abstract class Flags
 	 * @return bool
 	 * @since 6.1.0
 	 */
-	public static function unsetFlag($flagKey = '')
+	public function unsetFlag($flagKey = '')
 	{
-		if (self::hasFlag($flagKey)) {
-			unset(self::$internalFlags[$flagKey]);
+		if ($this->hasFlag($flagKey)) {
+			unset($this->internalFlags[$flagKey]);
 
 			return true;
 		}
@@ -165,9 +167,9 @@ abstract class Flags
 	 * @return bool
 	 * @since 6.1.0
 	 */
-	public static function removeFlag($flagKey = '')
+	public function removeFlag($flagKey = '')
 	{
-		return self::unsetFlag($flagKey);
+		return $this->unsetFlag($flagKey);
 	}
 
 	/**
@@ -176,26 +178,44 @@ abstract class Flags
 	 * @return bool
 	 * @since 6.1.0
 	 */
-	public static function deleteFlag($flagKey = '')
+	public function deleteFlag($flagKey = '')
 	{
-		return self::unsetFlag($flagKey);
+		return $this->unsetFlag($flagKey);
 	}
 
 	/**
 	 * @since 6.1.0
 	 */
-	public static function clearAllFlags()
+	public function clearAllFlags()
 	{
-		self::$internalFlags = [];
+		$this->internalFlags = [];
 	}
 
 	/**
 	 * Get them all.
 	 * @return mixed
 	 */
-	public static function getAllFlags()
+	public function getAllFlags()
 	{
-		return self::$internalFlags;
+		return $this->internalFlags;
 	}
 
+	public static function __callStatic($name, $arguments)
+	{
+		if (!is_object(self::$staticFlagSet)) {
+			self::$staticFlagSet = new Flags();
+		}
+
+		return call_user_func_array(
+			array(
+				self::$staticFlagSet,
+				preg_replace(
+					'/^_/',
+					'',
+					$name
+				)
+			),
+			$arguments
+		);
+	}
 }

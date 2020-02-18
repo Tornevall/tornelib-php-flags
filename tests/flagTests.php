@@ -17,42 +17,41 @@ class flagTests extends TestCase
 	 * @test
 	 * @throws \Exception
 	 */
-	public function setFlagKey()
+	public function setStaticFlagKey()
 	{
-		$flagStatus = Flags::setFlag('firstFlag', 'present');
-		static::assertTrue(
-			(
-			$flagStatus ? true : false &&
-				Flags::getFlag('firstFlag') === 'present'
-			)
-		);
+		$flagStatus = Flag::setFlag('firstFlag', 'present');
+
+		static::assertTrue((
+		$flagStatus ? true : false &&
+			Flag::getFlag('firstFlag') === 'present'
+		));
 	}
 
 	/**
 	 * @test
 	 */
-	public function setTrueFlag()
+	public function setStaticTrueFlag()
 	{
-		Flags::setFlag('secondFlag', true);
-		static::assertTrue(Flags::getFlag('secondFlag'));
+		Flag::setFlag('secondFlag', true);
+		static::assertTrue(Flag::getFlag('secondFlag'));
 	}
 
 	/**
 	 * @test
 	 */
-	public function setTrueWithoutKey()
+	public function setStaticTrueWithoutKey()
 	{
-		Flags::setFlag('thirdFlag');
-		static::assertTrue(Flags::isFlag('thirdFlag'));
+		Flag::setFlag('thirdFlag');
+		static::assertTrue(Flag::isFlag('thirdFlag'));
 	}
 
 	public function hasFlags()
 	{
-		Flags::setFlag('existingFlag', 'yes');
+		Flag::setFlag('existingFlag', 'yes');
 
 		static::assertTrue(
-			Flags::hasFlag('existingFlag') === 'yes' &&
-			!Flags::hasFlag('unExistingFlag')
+			Flag::hasFlag('existingFlag') === 'yes' &&
+			!Flag::hasFlag('unExistingFlag')
 		);
 	}
 
@@ -61,11 +60,11 @@ class flagTests extends TestCase
 	 */
 	public function getAll()
 	{
-		Flags::setFlag('firstFlag', 'present');
-		Flags::setFlag('secondFlag', true);
-		Flags::setFlag('thirdFlag');
+		Flag::setFlag('firstFlag', 'present');
+		Flag::setFlag('secondFlag', true);
+		Flag::setFlag('thirdFlag');
 
-		static::assertCount(3, Flags::getAllFlags());
+		static::assertCount(3, Flag::getAllFlags());
 	}
 
 	/**
@@ -73,12 +72,12 @@ class flagTests extends TestCase
 	 */
 	public function clearAll()
 	{
-		Flags::setFlag('firstFlag', 'present');
-		Flags::setFlag('secondFlag', true);
-		Flags::setFlag('thirdFlag');
-		Flags::clearAllFlags();
+		Flag::setFlag('firstFlag', 'present');
+		Flag::setFlag('secondFlag', true);
+		Flag::setFlag('thirdFlag');
+		Flag::clearAllFlags();
 
-		static::assertCount(0, Flags::getAllFlags());
+		static::assertCount(0, Flag::getAllFlags());
 	}
 
 	/**
@@ -86,26 +85,28 @@ class flagTests extends TestCase
 	 */
 	public function clearOne()
 	{
-		Flags::setFlag('firstFlag', 'present');
-		Flags::setFlag('secondFlag', true);
-		Flags::setFlag('thirdFlag');
-		Flags::removeFlag('secondFlag');
+		Flag::setFlag('firstFlag', 'present');
+		Flag::setFlag('secondFlag', true);
+		Flag::setFlag('thirdFlag');
+		Flag::removeFlag('secondFlag');
 
-		static::assertCount(2, Flags::getAllFlags());
+		static::assertCount(2, Flag::getAllFlags());
+		Flag::clearAllFlags();
 	}
 
 	/**
 	 * @test
 	 * @throws \Exception
 	 */
-	public function manyFlags() {
-		Flags::setFlags([
+	public function manyFlags()
+	{
+		Flag::setFlags([
 			'flag1' => 'yes',
 			'flag2' => 'current',
 			'flag3' => 'present'
 		]);
 
-		static::assertCount(3, Flags::getAllFlags());
+		static::assertCount(3, Flag::getAllFlags());
 	}
 
 	/**
@@ -115,7 +116,7 @@ class flagTests extends TestCase
 	 */
 	public function setNonStaticFlagKey()
 	{
-		$flag = new Flag();
+		$flag = new Flags();
 		$flagStatus = $flag->setFlag('firstFlag', 'present');
 		static::assertTrue(
 			(
@@ -125,4 +126,12 @@ class flagTests extends TestCase
 		);
 	}
 
+	/**
+	 * @test
+	 */
+	public function setStaticFlagInside()
+	{
+		Flags::_setFlag('this_is', 'static');
+		static::assertTrue(Flags::_getFlag('this_is') === 'static');
+	}
 }
