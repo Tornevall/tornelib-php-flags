@@ -2,6 +2,9 @@
 
 namespace TorneLIB;
 
+use TorneLIB\Exception\Constants;
+use TorneLIB\Exception\ExceptionHandler;
+
 /**
  * Class Flags Statically callable.
  * @package TorneLIB
@@ -41,9 +44,9 @@ class Flags
         }
 
         // LIB_UNHANDLED
-        throw new \Exception(
-            "Flags can not be empty",
-            65535
+        throw new ExceptionHandler(
+            'Flags can not be empty',
+            Constants::LIB_FLAG_EXCEPTION
         );
     }
 
