@@ -29,7 +29,7 @@ class Flags
      * @param string $flagValue
      *
      * @return bool If successful
-     * @throws \Exception
+     * @throws ExceptionHandler
      * @since 6.1.0
      */
     public function setFlag($flagKey = '', $flagValue = null)
@@ -45,7 +45,10 @@ class Flags
 
         // LIB_UNHANDLED
         throw new ExceptionHandler(
-            'Flags can not be empty',
+            sprintf(
+                'Exception in "%s": Flags can not be empty.',
+                __FUNCTION__
+            ),
             Constants::LIB_FLAG_EXCEPTION
         );
     }
@@ -116,7 +119,7 @@ class Flags
      * Set multiple flags
      *
      * @param array $flags
-     * @throws \Exception
+     * @throws ExceptionHandler
      * @since 6.1.1
      */
     public function setFlags($flags = [])
