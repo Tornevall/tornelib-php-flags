@@ -13,7 +13,7 @@ use TorneLIB\Exception\ExceptionHandler;
 /**
  * Class Flags Statically callable.
  * @package TorneLIB
- * @version 6.1.2
+ * @version 6.1.4
  */
 class Flags
 {
