@@ -23,6 +23,13 @@ class Flags
     private $internalFlags = [];
 
     /**
+     * List of locked flags, which can only be set while they are not set.
+     * @var array
+     * @since 6.1.4
+     */
+    private $lockedFlags = [];
+
+    /**
      * @var array For all static calls.
      */
     protected static $staticFlagSet = [];
@@ -31,21 +38,31 @@ class Flags
      * Set internal flag parameter.
      *
      * @param string $flagKey
-     * @param string $flagValue
-     *
+     * @param null $flagValue
+     * @param bool $lock
      * @return bool If successful
-     * @throws ExceptionHandler
      * @since 6.1.0
      */
-    public function setFlag($flagKey = '', $flagValue = null)
+    public function setFlag($flagKey = '', $flagValue = null, $lock = false)
     {
+        $return = true;
         if (!empty($flagKey)) {
             if (is_null($flagValue)) {
                 $flagValue = true;
             }
-            $this->internalFlags[$flagKey] = $flagValue;
+            if ($lock) {
+                $this->lockedFlags[$flagKey] = (bool)$lock;
+            }
+            if (isset($this->lockedFlags[$flagKey]) &&
+                $this->lockedFlags[$flagKey] === true &&
+                isset($this->internalFlags[$flagKey])
+            ) {
+                $return = false;
+            } else {
+                $this->internalFlags[$flagKey] = $flagValue;
+            }
 
-            return true;
+            return $return;
         }
 
         // LIB_UNHANDLED
@@ -127,15 +144,17 @@ class Flags
      * @throws ExceptionHandler
      * @since 6.1.1
      */
-    public function setFlags($flags = [])
+    public function setFlags($flags = [], $lock = [])
     {
         if ($this->isAssoc($flags)) {
             foreach ($flags as $flagKey => $flagData) {
-                $this->setFlag($flagKey, $flagData);
+                $lockFlag = isset($lock[$flagKey]) ? $lock[$flagKey] : false;
+                $this->setFlag($flagKey, $flagData, $lockFlag);
             }
         } else {
             foreach ($flags as $flagKey) {
-                $this->setFlag($flagKey, true);
+                $lockFlag = isset($lock[$flagKey]) ? $lock[$flagKey] : false;
+                $this->setFlag($flagKey, true, $lockFlag);
             }
         }
     }
