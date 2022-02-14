@@ -134,4 +134,19 @@ class flagTests extends TestCase
         Flags::_setFlag('this_is', 'static');
         static::assertTrue(Flags::_getFlag('this_is') === 'static');
     }
+
+    /**
+     * @test
+     */
+    public function setLockFlag()
+    {
+        // Only allowed to set once.
+        $firstSet = Flag::setFlag('is', 'set', true);
+        $secondSet = Flag::setFlag('is', 'not allowed');
+        static::assertTrue(
+            Flag::getFlag('is') === 'set' &&
+            $firstSet &&
+            !$secondSet
+        );
+    }
 }
