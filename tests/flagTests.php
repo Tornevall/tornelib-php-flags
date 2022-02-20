@@ -149,4 +149,17 @@ class flagTests extends TestCase
             !$secondSet
         );
     }
+
+    /**
+     * Addressing flag-class instantly.
+     *
+     * @test
+     * @since 6.1.5
+     */
+    public function getFlagClass()
+    {
+        $flags = Flag::getInstance();
+        $flags->setFlag('lib', true);
+        static::assertTrue(Flag::getFlag('lib'));
+    }
 }
